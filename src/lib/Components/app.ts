@@ -22,13 +22,27 @@ export class AnimeCard {
 	}
 }
 
-export async function fetchAnime(title: String) {
+export async function fetchAnime(search: String) {
 	let source = 'https://graphql.anilist.co';
-	var { graphql, buildSchema } = require('graphql');
+
+	let variables = {
+		search: search
+	}
+	// let query = `query {
+ 
+	// 	Media(search:"Cowboy Bebop") {
+	// 	  title {
+	// 		romaji
+	// 		english
+	// 		native
+	// 		userPreferred
+	// 	  }
+	// 	} 
+	// 	}`
 
 	let query = `
-	query = type Query {              
-		Media(type: ANIME, sort: SCORE_DESC) {
+	query($search: String) {              
+		Media(search: $search, type: ANIME, sort: SCORE_DESC) {
 			title {
 				english
 			}
@@ -37,73 +51,44 @@ export async function fetchAnime(title: String) {
 			coverImage {
 				medium
 			}
-			recommendations(sort: RATING_DESC, page: 1, perPage: 20) {
-				edges {
-					node {
-						id
-					}
-				}
-			}
 		}
-	`;
+	}`;
+		
+		// recommendations(sort: RATING_DESC, page: 1, perPage: 20) {
+		// 	edges {
+		// 		node {
+		// 			id
+		// 		}
+		// 	}
+		// }
+	//let query = "";
 	const response = await window.fetch(source, {
 		method: 'POST',
 		headers: {
 		  'content-type': 'application/json;charset=UTF-8',
+		  'Accept': 'application/json',
 		},
 		body: JSON.stringify({
 		  query: query,
-		  variables: {name: title.toLowerCase()},
+		  variables: variables,
 		}),
 	  })
 	
 	  const {data, errors} = await response.json()
 
-	  if (response.ok) {
-		const anime = data?.Media;
-		if (anime) {
-		  // add fetchedAt helper (used in the UI to help differentiate requests)
-		  return anime;
-		} else {
-		  return Promise.reject(new Error(`No anime with the title "${title}"`))
-		}
-	  } else {
-		// handle the graphql errors
-		const error = new Error(errors?.map((e: { message: any; }) => e.message).join('\n') ?? 'unknown')
-		return Promise.reject(error)
-	  }
-
+	  if(response.ok) return data;
+	  else return errors;
+	//   if (response.ok) {
+	// 	const anime = data?.Media;
+	// 	if (anime) {
+	// 	  // add fetchedAt helper (used in the UI to help differentiate requests)
+	// 	  return anime;
+	// 	} else {
+	// 	  return Promise.reject(new Error(`No anime with the title "${title}"`))
+	// 	}
+	//   } else {
+	// 	// handle the graphql errors
+	// 	const error = new Error(errors?.map((e => e.message)?? 'unknown'))
+	// 	return Promise.reject(errors)
+	//   }
 }
-
-// 	var url = 'https://graphql.anilist.co',    
-// 	options = {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'Accept': 'application/json',
-//         },
-//         body: JSON.stringify({
-//             query: query,
-// //            variables: variables -add when we do user input stuff
-//         })
-// 	};
-
-// 		fetch(url, options).then(handleResponse)
-//                    .then(handleData)
-//                    .catch(handleError);
-//     };
-
-// 	function handleResponse(response: Response) {
-// 		return response.json().then(function (json) {
-// 			return response.ok ? json : Promise.reject(json);
-// 		});
-// 	}
-	
-// 	function handleData(data: JSON) {
-// 		console.log(data);
-// 	}
-	
-// 	function handleError(error: Error)
-// 	{
-// 		return alert('error, check console');
-// 	}

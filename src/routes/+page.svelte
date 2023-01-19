@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import OutlierForm from "../lib/Components/OutlierForm.svelte";
     import { AnimeCard, fetchAnime } from "../lib/Components/app";
 
     let aTitle = "test";
+    let result;
 
     function handleClick() {
-        alert('The user input ß' + aTitle);
+        result = fetchAnime("Cowboy Bebop");
     }
 </script>
 
@@ -34,4 +34,5 @@
 <button on:click={handleClick}>
     Submit
 </button>
+<p>{result}</p>
 <noscript>You must enable Javascript to use this website</noscript>
