@@ -1,14 +1,17 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 // and what to do when importing types
+export const requestOneAnime = new Object();
+export const requestReccomendedAnime = new Object();
+
 export class AnimeCard {
-	animeTitle: String;
-	imgurl: String;
+	animeTitle: string;
+	imgurl: string;
 	//rating?
 	//release date?
 	//Popularity?
 
-	constructor(title: String, url: String) {
+	constructor(title = "", url = "") {
 		this.animeTitle = title;
 		this.imgurl = url;
 	}
@@ -16,79 +19,83 @@ export class AnimeCard {
 	display() {
 		return "we are displaying the anime";
 	}
-
-	getTitle() {
+	
+	getTitle(): string {
 		return this.animeTitle;
 	}
 }
 
-export async function fetchAnime(search: String) {
+// export function getSingleAnime(search: String, option: Object) {
+// 	return fetchAnime(search, option).then(e => e.data.Media).then(r => {
+// 		new AnimeCard(r.title.english, r.coverImage)});
+// }
+
+function getUserReccomendations(ids = Array<number>) {
+
+}
+
+export async function fetchAnime(search: String, option: Object, id: Number) {
 	let source = 'https://graphql.anilist.co';
 
 	let variables = {
-		search: search
+		search: search,
+		id: id,
 	}
-	// let query = `query {
- 
-	// 	Media(search:"Cowboy Bebop") {
-	// 	  title {
-	// 		romaji
-	// 		english
-	// 		native
-	// 		userPreferred
-	// 	  }
-	// 	} 
-	// 	}`
 
-	let query = `
-	query($search: String) {              
-		Media(search: $search, type: ANIME, sort: SCORE_DESC) {
-			title {
-				english
-			}
-			averageScore
-			siteUrl
-			coverImage {
-				medium
-			}
-		}
-	}`;
-		
-		// recommendations(sort: RATING_DESC, page: 1, perPage: 20) {
-		// 	edges {
-		// 		node {
-		// 			id
-		// 		}
-		// 	}
-		// }
-	//let query = "";
-	const response = await window.fetch(source, {
+	const data = await window.fetch(source, {
 		method: 'POST',
 		headers: {
 		  'content-type': 'application/json;charset=UTF-8',
 		  'Accept': 'application/json',
 		},
 		body: JSON.stringify({
-		  query: query,
+		  query: (option == requestOneAnime) ? userAnimeQuery : userReccomendationQuery,
 		  variables: variables,
 		}),
-	  })
-	
-	  const {data, errors} = await response.json()
-
-	  if(response.ok) return data;
-	  else return errors;
-	//   if (response.ok) {
-	// 	const anime = data?.Media;
-	// 	if (anime) {
-	// 	  // add fetchedAt helper (used in the UI to help differentiate requests)
-	// 	  return anime;
-	// 	} else {
-	// 	  return Promise.reject(new Error(`No anime with the title "${title}"`))
-	// 	}
-	//   } else {
-	// 	// handle the graphql errors
-	// 	const error = new Error(errors?.map((e => e.message)?? 'unknown'))
-	// 	return Promise.reject(errors)
-	//   }
+	  }).then(handleResponse)
+	return data;
 }
+
+function handleResponse(response: Response) {
+	return response.json().then(function (json) {
+        return response.ok ? json : Promise.reject(json);
+    });
+}
+
+//for when the user inputs their anime title they like
+const userAnimeQuery = `
+query($search: String) {              
+	Media(search: $search, type: ANIME, sort: SCORE_DESC) {
+		title {
+			english
+		}
+		siteUrl
+		coverImage {
+			medium
+		}
+		recommendations(sort: RATING_DESC, page: 1, perPage: 20) {
+			edges {
+				node {
+					id
+					rating
+				}
+			}
+		}
+	}
+}`;
+
+//for when we need to request all the info about the reccomended animes we have for the use 
+//all we have is ID for this one
+const userReccomendationQuery = `
+query($id: Int) {              
+	Media(id: $id, type: ANIME, sort: SCORE_DESC) {
+		title {
+			english
+		}
+		averageScore
+		siteUrl
+		coverImage {
+			medium
+		}
+	}
+}`;
