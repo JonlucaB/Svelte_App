@@ -16,19 +16,27 @@ export class AnimeCard {
 		this.imgurl = url;
 	}
 
-	display() {
-		return "we are displaying the anime";
+	display(): Element {
+		const card = document.createElement('card');
+
+		card.innerHTML = `
+			<div class='card'>
+				<h1>${this.animeTitle}</h1>
+				<img src=${this.imgurl} class="img-fluid img-center img-round img-featured" data-v-0f11a864=""/>
+				<a href= class="button">See More</a>
+			</div>`
+
+		return card;
 	}
 	
 	getTitle(): string {
 		return this.animeTitle;
 	}
-}
 
-// export function getSingleAnime(search: String, option: Object) {
-// 	return fetchAnime(search, option).then(e => e.data.Media).then(r => {
-// 		new AnimeCard(r.title.english, r.coverImage)});
-// }
+	getImgUrl(): string {
+		return this.imgurl;
+	}
+}
 
 function getUserReccomendations(ids = Array<number>) {
 
@@ -84,8 +92,6 @@ query($search: String) {
 	}
 }`;
 
-//for when we need to request all the info about the reccomended animes we have for the use 
-//all we have is ID for this one
 const userReccomendationQuery = `
 query($id: Int) {              
 	Media(id: $id, type: ANIME, sort: SCORE_DESC) {
