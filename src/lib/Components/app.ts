@@ -7,9 +7,7 @@ export const requestReccomendedAnime = new Object();
 export class AnimeCard {
 	animeTitle: string;
 	imgurl: string;
-	//rating?
-	//release date?
-	//Popularity?
+	recIds: Array<number>;
 
 	constructor(title = "", url = "") {
 		this.animeTitle = title;
@@ -62,7 +60,13 @@ export async function fetchAnime(search: String, option: Object, id: Number): Pr
 		}),
 	  }).then(handleResponse).then(function (data) {
             console.log(data)
-            return new AnimeCard(data.data.Media.title.english, data.data.Media.coverImage.medium)}).catch(function (error) {
+			console.log(data.data.Media.recommendations.edges)
+            let newCard = new AnimeCard(data.data.Media.title.english, 
+								 data.data.Media.coverImage.medium)
+			option == requestOneAnime ? generateIds(newCard.recIds = data.data.Media.recommendations.edges) : null
+
+			return newCard;
+			}).catch(function (error) {
                 console.log("There was an error in fetching the anime Title: "+search+" ID: "+id);
                 console.log(error);
                 return new AnimeCard("No Anime Found :(", "https://www.cambridge.org/elt/blog/wp-content/uploads/2019/07/Sad-Face-Emoji.png")
@@ -70,10 +74,21 @@ export async function fetchAnime(search: String, option: Object, id: Number): Pr
 	return data;
 }
 
+
+//just some ugly code to handle errors
 function handleResponse(response: Response) {
 	return response.json().then(function (json) {
         return response.ok ? json : Promise.reject(json);
     });
+}
+
+//jugly code to get ids out of fgetch
+function generateIds(data: any): Array<number> {
+	console.log(data[1]);
+	return data.edges.forEach(node => {
+		console.log(node.id);
+		return node.id
+	});
 }
 
 //for when the user inputs their anime title they like

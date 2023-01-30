@@ -3,16 +3,26 @@
 
     let aTitle = "test";
     async function handleClick() {
-        fetchAnime(aTitle, requestOneAnime, 0).then(createCard);
+        fetchAnime(aTitle, requestOneAnime, 0).then(createAnimeList);
     }
     
-    function createCard(card: AnimeCard) {
-        let cardDisplay = document.getElementById('cardDisplayd')
+
+    function createAnimeList(userAnime: AnimeCard) {
+        let cardDisplay = document.getElementById('cardDisplay')
         
         cardDisplay.firstChild ? cardDisplay.removeChild(cardDisplay.firstChild) : null
+        
+        cardDisplay?.appendChild(createCard(userAnime, true));
 
-        const newCard = document.createElement('card');
+        //display all the other reccomended animes yuh
+        userAnime.recIds.forEach(id => { fetchAnime("", requestReccomendedAnime, id).then(newCard => {
+            cardDisplay?.appendChild(createCard(newCard))
+        })})
+    };
 
+    function createCard(card: AnimeCard, selected = false): Node {
+        let newCard = document.createElement('card')
+        
         newCard.innerHTML = `
             <div class="card">
                 <h1>${card.getTitle()}</h1>
@@ -20,7 +30,7 @@
                 <a href=${card.getImgUrl()} class="button">See More</a>
             </div>`
 
-        cardDisplay?.appendChild(newCard);
+        return newCard;
     }
 </script>
 
