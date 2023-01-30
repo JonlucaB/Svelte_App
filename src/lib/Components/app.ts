@@ -42,7 +42,7 @@ function getUserReccomendations(ids = Array<number>) {
 
 }
 
-export async function fetchAnime(search: String, option: Object, id: Number) {
+export async function fetchAnime(search: String, option: Object, id: Number): Promise<AnimeCard> {
 	let source = 'https://graphql.anilist.co';
 
 	let variables = {
@@ -60,7 +60,13 @@ export async function fetchAnime(search: String, option: Object, id: Number) {
 		  query: (option == requestOneAnime) ? userAnimeQuery : userReccomendationQuery,
 		  variables: variables,
 		}),
-	  }).then(handleResponse)
+	  }).then(handleResponse).then(function (data) {
+            console.log(data)
+            return new AnimeCard(data.data.Media.title.english, data.data.Media.coverImage.medium)}).catch(function (error) {
+                console.log("There was an error in fetching the anime Title: "+search+" ID: "+id);
+                console.log(error);
+                return new AnimeCard("No Anime Found :(", "https://www.cambridge.org/elt/blog/wp-content/uploads/2019/07/Sad-Face-Emoji.png")
+	  })
 	return data;
 }
 
