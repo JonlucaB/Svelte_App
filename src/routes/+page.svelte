@@ -15,7 +15,7 @@
         cardDisplay?.appendChild(createCard(userAnime, true));
 
         //display all the other reccomended animes yuh
-        userAnime.recIds.forEach(id => { fetchAnime("", requestReccomendedAnime, id).then(newCard => {
+        userAnime.recIds.forEach(function (id) { fetchAnime("", requestReccomendedAnime, id).then(newCard => {
             cardDisplay?.appendChild(createCard(newCard))
         })})
     };

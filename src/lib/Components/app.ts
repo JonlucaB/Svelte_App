@@ -84,11 +84,7 @@ function handleResponse(response: Response) {
 
 //jugly code to get ids out of fgetch
 function generateIds(data: any): Array<number> {
-	console.log(data[1]);
-	return data.edges.forEach(node => {
-		console.log(node.id);
-		return node.id
-	});
+	return data.forEach(function (n) {n.id})
 }
 
 //for when the user inputs their anime title they like
