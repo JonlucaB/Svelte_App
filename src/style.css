@@ -1,0 +1,78 @@
+
+html {
+    background: #BB9;
+    margin: 0;
+    height: 100%;
+    border-width: 3px;
+    border-style: solid;
+    border-color: #000;
+}
+.card {
+    /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); */
+    outline-style: dashed;
+    outline-width: 2px;
+    margin: auto;
+    text-align: center;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    position:absolute;
+    left:0;
+    max-width: 200px;
+    max-height: 400px;
+}
+
+.animeList {
+    padding: 10px;
+    position: relative;
+    display: grid; 
+    grid-template-rows: repeat(2, 400px);
+    grid-template-columns: repeat(10, 200px);
+}
+
+.card h1 {
+    font-size: 12px;
+    padding: 0px;
+}
+
+.card img {
+    outline-width: 10px;
+    outline-color: black;
+    width:90%;
+    height:90%;
+    max-width: 200px;
+    max-height: 240;
+    padding: 3px;
+}
+
+.card a.button {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+    
+    border: #BB9;
+    outline: 1;
+    padding: 10px;
+    color: black;
+    text-align: center;
+    cursor: pointer;
+    max-width: 200px;
+    font-size: 12px;
+}
+
+.card a.button:hover {
+    opacity: 0.7;
+}
+
+#userAnime {
+    border:rgba(0, 0, 0, 0.2);
+    position: relative;
+
+}
+
+.div-1 {
+    text-align: center;
+    font-family: Tahoma;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 300;
+    align-self: left;
+}

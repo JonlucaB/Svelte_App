@@ -10,43 +10,30 @@
     function createAnimeList(userAnime: AnimeCard) {
         let cardDisplay = document.getElementById('animeList')
         
-        cardDisplay.firstChild ? cardDisplay.removeChild(cardDisplay.firstChild) : null
+        cardDisplay?.firstChild ? cardDisplay.removeChild(cardDisplay.firstChild) : 
         
         cardDisplay?.appendChild(userAnime.display());
 
         //display all the other reccomended animes yuh
         userAnime.recIds.forEach(function (id) { fetchAnime("", requestReccomendedAnime, id).then(newCard => {
-            cardDisplay?.appendChild(newCard.display())})
+            cardDisplay?.appendChild(newCard.display())}).catch(function (error) {
+                console.log("Failure to load Anime ID: "+id+"\nResulted in the following error\n"+error);
+            })
         })
     };
-
-    // function createCard(card: AnimeCard, selected = false): Node {
-    //     let newCard = document.createElement('card')
-        
-    //     newCard.innerHTML = card.display;
-
-    //     return newCard;
-    // }
 </script>
 
-<style>
-    h1 {
-        text-align: center;
-        font-family: Tahoma;
-        font-size: 40px;
-        font-style: normal;
-        font-weight: 400;
-    }
-</style>
-
-<div class="div-1">
-    <h1>WIP Anime reccomendation app using graphql and svelte</h1>
-    <input bind:value={aTitle}>
-    <button on:click={handleClick}>
-        Submit Your Anime
-    </button>
-</div>
-
-<div class="animeList" id="animeList">
-</div>
-<noscript>You must enable Javascript to use this website</noscript>
+<link rel="stylesheet" href="../style.css"/>
+<body>
+    <div class="div-1">
+        <h1>WIP Anime reccomendation app using graphql and svelte</h1>
+        <input bind:value={aTitle}>
+        <button on:click={handleClick}>
+            Submit Your Anime
+        </button>
+    </div>
+    
+    <div class="animeList" id="animeList">
+    </div>
+    <noscript>You must enable Javascript to use this website</noscript>
+</body>
