@@ -8,30 +8,25 @@
     
 
     function createAnimeList(userAnime: AnimeCard) {
-        let cardDisplay = document.getElementById('cardDisplay')
+        let cardDisplay = document.getElementById('animeList')
         
         cardDisplay.firstChild ? cardDisplay.removeChild(cardDisplay.firstChild) : null
         
-        cardDisplay?.appendChild(createCard(userAnime, true));
+        cardDisplay?.appendChild(userAnime.display());
 
         //display all the other reccomended animes yuh
         userAnime.recIds.forEach(function (id) { fetchAnime("", requestReccomendedAnime, id).then(newCard => {
-            cardDisplay?.appendChild(createCard(newCard))
-        })})
+            cardDisplay?.appendChild(newCard.display())})
+        })
     };
 
-    function createCard(card: AnimeCard, selected = false): Node {
-        let newCard = document.createElement('card')
+    // function createCard(card: AnimeCard, selected = false): Node {
+    //     let newCard = document.createElement('card')
         
-        newCard.innerHTML = `
-            <div class="card">
-                <h1>${card.getTitle()}</h1>
-                <img src=${card.getImgUrl()} class="img-fluid img-center img-round img-featured" data-v-0f11a864=""/>
-                <a href=${card.getImgUrl()} class="button">See More</a>
-            </div>`
+    //     newCard.innerHTML = card.display;
 
-        return newCard;
-    }
+    //     return newCard;
+    // }
 </script>
 
 <style>
@@ -52,6 +47,6 @@
     </button>
 </div>
 
-<div class="cardDisplay" id="cardDisplay">
+<div class="animeList" id="animeList">
 </div>
 <noscript>You must enable Javascript to use this website</noscript>

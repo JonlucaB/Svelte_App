@@ -12,6 +12,7 @@ export class AnimeCard {
 	constructor(title = "", url = "") {
 		this.animeTitle = title;
 		this.imgurl = url;
+		this.recIds = new Array<number>;
 	}
 
 	display(): Element {
@@ -36,10 +37,6 @@ export class AnimeCard {
 	}
 }
 
-function getUserReccomendations(ids = Array<number>) {
-
-}
-
 export async function fetchAnime(search: String, option: Object, id: Number): Promise<AnimeCard> {
 	let source = 'https://graphql.anilist.co';
 
@@ -59,11 +56,10 @@ export async function fetchAnime(search: String, option: Object, id: Number): Pr
 		  variables: variables,
 		}),
 	  }).then(handleResponse).then(function (data) {
-            console.log(data)
-			console.log(data.data.Media.recommendations.edges)
+            //console.log(data)
             let newCard = new AnimeCard(data.data.Media.title.english, 
 								 data.data.Media.coverImage.medium)
-			option == requestOneAnime ? generateIds(newCard.recIds = data.data.Media.recommendations.edges) : null
+			option == requestOneAnime ? newCard.recIds = generateIds(data.data.Media.recommendations.edges) : null
 
 			return newCard;
 			}).catch(function (error) {
@@ -84,7 +80,15 @@ function handleResponse(response: Response) {
 
 //jugly code to get ids out of fgetch
 function generateIds(data: any): Array<number> {
-	return data.forEach(function (n) {n.id})
+	let ids = new Array<number>(20);
+
+	for(let i = 0; i < data.length; i++) {
+		let temp = data[i].node.id;
+		ids[i] = temp;
+		console.log("ID: "+i+" "+temp);
+	}
+
+	return ids;
 }
 
 //for when the user inputs their anime title they like
@@ -111,7 +115,7 @@ query($search: String) {
 
 const userReccomendationQuery = `
 query($id: Int) {              
-	Media(id: $id, type: ANIME, sort: SCORE_DESC) {
+	Media(id: $id, sort: SCORE_DESC) {
 		title {
 			english
 		}
